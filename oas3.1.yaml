@@ -1,0 +1,749 @@
+openapi: 3.1.0
+info:
+  title: AI/ML API - Video Generation (Consolidated)
+  version: "1.0.0"
+  description: Consolidated OpenAPI 3.1 spec for video generation endpoints and model listing.
+servers:
+  - url: https://api.aimlapi.com
+security:
+  - BearerAuth: []
+paths:
+  /v2/generate/video/google/generation:
+    post:
+      tags: [Google Veo]
+      summary: Create a video generation task (Google Veo 3 / Veo 3 Fast)
+      description: Returns a generation ID; prompt can be auto-enhanced unless enhance_prompt=false.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/GoogleVeo3FastI2VRequest'
+                - $ref: '#/components/schemas/GoogleVeo3FastT2VRequest'
+                - $ref: '#/components/schemas/GoogleVeo3I2VRequest'
+                - $ref: '#/components/schemas/GoogleVeo3T2VRequest'
+      responses:
+        '201':
+          description: Task enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnqueueResponse'
+    get:
+      tags: [Google Veo]
+      summary: Fetch the generated video (Google)
+      parameters:
+        - $ref: '#/components/parameters/GenerationId'
+      responses:
+        '200':
+          description: Generation status/result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseGeneric'
+  /v2/generate/video/kling/generation:
+    post:
+      tags: [Kling v2.1-master]
+      summary: Create a video generation task (Kling)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/KlingImageToVideoRequest'
+                - $ref: '#/components/schemas/KlingTextToVideoRequest'
+      responses:
+        '201':
+          description: Task enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnqueueResponse'
+    get:
+      tags: [Kling v2.1-master]
+      summary: Fetch the generated video (Kling)
+      parameters:
+        - $ref: '#/components/parameters/GenerationId'
+      responses:
+        '200':
+          description: Generation status/result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseGeneric'
+  /v2/generate/video/luma-ai/generation:
+    post:
+      tags: [Luma Dream Machine]
+      summary: Generate video (Luma Dream Machine)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LumaGenerateRequest'
+      responses:
+        '201':
+          description: Task enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnqueueResponse'
+    get:
+      tags: [Luma Dream Machine]
+      summary: Fetch generation (Luma Dream Machine)
+      parameters:
+        - $ref: '#/components/parameters/GenerationId'
+        - $ref: '#/components/parameters/LumaState'
+      responses:
+        '200':
+          description: Generation state/result (queued -> dreaming -> completed; failed may be returned while waiting for higher-priority state)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseGeneric'
+  /v2/generate/video/minimax/generation:
+    post:
+      tags: [MiniMax Hailuo]
+      summary: Create a video generation task (MiniMax Hailuo-02)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MiniMaxHailuoRequest'
+      responses:
+        '201':
+          description: Task enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MiniMaxEnqueueResponse'
+    get:
+      tags: [MiniMax Hailuo]
+      summary: Retrieve the generated video (MiniMax Hailuo-02)
+      parameters:
+        - $ref: '#/components/parameters/GenerationId'
+      responses:
+        '200':
+          description: Status and result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MiniMaxFetchResponse'
+  /v2/generate/video/runway/generation:
+    post:
+      tags: [Runway Act-Two]
+      summary: Generate video (Runway Act-Two)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunwayActTwoRequest'
+      responses:
+        '201':
+          description: Task enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunwayEnqueueResponse'
+    get:
+      tags: [Runway Act-Two]
+      summary: Retrieve the generated video (Runway Act-Two)
+      parameters:
+        - $ref: '#/components/parameters/GenerationId'
+      responses:
+        '200':
+          description: Status and result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunwayFetchResponse'
+  /v2/generate/video/bytedance/generation:
+    post:
+      tags: [ByteDance Seedance 1.0 Pro]
+      summary: Create a video generation task (Seedance 1.0 Pro)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/SeedanceI2VRequest'
+                - $ref: '#/components/schemas/SeedanceT2VRequest'
+      responses:
+        '201':
+          description: Task enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnqueueResponse'
+    get:
+      tags: [ByteDance Seedance 1.0 Pro]
+      summary: Retrieve the generated video (Seedance 1.0 Pro)
+      parameters:
+        - $ref: '#/components/parameters/GenerationId'
+      responses:
+        '200':
+          description: Status and result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseGeneric'
+  /v2/generate/video/alibaba/generation:
+    post:
+      tags: [Alibaba Wan 2.2 Plus]
+      summary: Create a video generation task (Wan 2.2 Plus)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlibabaWanT2VPlusRequest'
+      responses:
+        '201':
+          description: Task enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnqueueResponse'
+    get:
+      tags: [Alibaba Wan 2.2 Plus]
+      summary: Fetch the generated video (Wan 2.2 Plus)
+      parameters:
+        - $ref: '#/components/parameters/GenerationId'
+      responses:
+        '200':
+          description: Generation status/result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FetchResponseGeneric'
+  /models:
+    get:
+      tags: [Models]
+      summary: Get Model List via API
+      security: []  # Public per docs example
+      responses:
+        '200':
+          description: Model list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsListResponse'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    GenerationId:
+      name: generation_id
+      in: query
+      required: true
+      description: Generation ID returned from the enqueue call
+      schema:
+        type: string
+    LumaState:
+      name: state
+      in: query
+      required: false
+      description: Desired minimum state to wait for
+      schema:
+        type: string
+        enum: [queued, dreaming, completed]
+  schemas:
+    EnqueueResponse:
+      type: object
+      description: Generic enqueue response (ID fields vary by provider)
+      properties:
+        id:
+          type: string
+          description: Identifier of the generation task
+        generation_id:
+          type: string
+          description: Identifier of the generation task
+        status:
+          type: string
+          description: Initial status (e.g., queued)
+        message:
+          type: string
+    FetchResponseGeneric:
+      type: object
+      description: Generic fetch response (fields vary by provider)
+      properties:
+        id:
+          type: string
+        generation_id:
+          type: string
+        status:
+          type: string
+          description: Current status (e.g., queued, dreaming, completed, failed)
+        video:
+          description: Generated video(s)
+          oneOf:
+            - type: string
+              format: uri
+            - type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+            - type: array
+              items:
+                type: string
+                format: uri
+        error:
+          type: string
+    GoogleVeo3FastI2VRequest:
+      type: object
+      required: [model, image_url, prompt]
+      properties:
+        model:
+          type: string
+          enum: [google/veo-3.0-i2v-fast]
+        image_url:
+          type: string
+          description: Direct URL or Base64-encoded image
+        prompt:
+          type: string
+        resolution:
+          type: string
+          enum: [720P, 1080P]
+          default: 720P
+        duration:
+          type: integer
+          enum: [8]
+          default: 8
+        negative_prompt:
+          type: string
+        seed:
+          type: integer
+        enhance_prompt:
+          type: boolean
+          default: true
+        generate_audio:
+          type: boolean
+          default: true
+    GoogleVeo3FastT2VRequest:
+      type: object
+      required: [model, prompt]
+      properties:
+        model:
+          type: string
+          enum: [google/veo-3.0-fast]
+        prompt:
+          type: string
+        resolution:
+          type: string
+          enum: [720P, 1080P]
+          default: 720P
+        duration:
+          type: integer
+          enum: [8]
+          default: 8
+        negative_prompt:
+          type: string
+        seed:
+          type: integer
+        enhance_prompt:
+          type: boolean
+          default: true
+        generate_audio:
+          type: boolean
+          default: true
+    GoogleVeo3I2VRequest:
+      type: object
+      required: [model, image_url, prompt]
+      properties:
+        model:
+          type: string
+          enum: [google/veo-3.0-i2v]
+        image_url:
+          type: string
+          description: Direct URL or Base64-encoded image
+        prompt:
+          type: string
+        resolution:
+          type: string
+          enum: [720P, 1080P]
+          default: 720P
+        duration:
+          type: integer
+          enum: [8]
+          default: 8
+        negative_prompt:
+          type: string
+        seed:
+          type: integer
+        enhance_prompt:
+          type: boolean
+          default: true
+        generate_audio:
+          type: boolean
+          default: true
+    GoogleVeo3T2VRequest:
+      type: object
+      required: [model, prompt]
+      properties:
+        model:
+          type: string
+          enum: [google/veo3]
+        prompt:
+          type: string
+        resolution:
+          type: string
+          enum: [720P, 1080P]
+          default: 720P
+        duration:
+          type: integer
+          enum: [8]
+          default: 8
+        negative_prompt:
+          type: string
+        seed:
+          type: integer
+        enhance_prompt:
+          type: boolean
+          default: true
+        generate_audio:
+          type: boolean
+          default: true
+    KlingImageToVideoRequest:
+      type: object
+      required: [model, image_url, duration]
+      properties:
+        model:
+          type: string
+          enum: [klingai/v2.1-master-image-to-video]
+        image_url:
+          type: string
+          description: Direct URL or Base64-encoded image
+        prompt:
+          type: string
+        duration:
+          type: integer
+          enum: [5, 10]
+        negative_prompt:
+          type: string
+        cfg_scale:
+          type: number
+          maximum: 1
+          description: Classifier Free Guidance scale (how strictly to follow the prompt)
+    KlingTextToVideoRequest:
+      type: object
+      required: [model, aspect_ratio, prompt, duration]
+      properties:
+        model:
+          type: string
+          enum: [klingai/v2.1-master-text-to-video]
+        ratio:
+          type: string
+          enum: ['16:9', '9:16', '1:1']
+          description: Deprecated in favor of aspect_ratio
+        aspect_ratio:
+          type: string
+          enum: ['16:9', '9:16', '1:1']
+        prompt:
+          type: string
+        duration:
+          type: integer
+          enum: [5, 10]
+        negative_prompt:
+          type: string
+        cfg_scale:
+          type: number
+          maximum: 1
+          description: Classifier Free Guidance scale (how strictly to follow the prompt)
+    LumaGenerateRequest:
+      type: object
+      required: [generation_type, prompt]
+      properties:
+        generation_type:
+          type: string
+          enum: [video]
+        prompt:
+          type: string
+        aspect_ratio:
+          type: string
+          enum: ['1:1', '16:9', '9:16', '4:3', '3:4', '21:9', '9:21']
+        loop:
+          type: boolean
+          default: false
+        keyframes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/LumaKeyframeRef'
+          description: Keyframe map (e.g., frame0, frame1)
+        callback_url:
+          anyOf:
+            - type: string
+              format: uri
+            - type: 'null'
+        model:
+          type: string
+          enum: [ray-1-6]
+          default: ray-1-6
+        resolution: {}
+        duration:
+          anyOf:
+            - type: string
+            - type: 'null'
+        concepts:
+          anyOf:
+            - type: string
+            - type: 'null'
+    LumaKeyframeRef:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [generation]
+        id:
+          type: string
+          description: Generation ID (UUID format expected)
+    MiniMaxHailuoRequest:
+      type: object
+      required: [model, prompt, duration]
+      properties:
+        model:
+          type: string
+          enum: [minimax/hailuo-02]
+        prompt:
+          type: string
+          maxLength: 2000
+        prompt_optimizer:
+          type: boolean
+          default: true
+          description: If true, prompt is auto-optimized; set false for stricter control
+        first_frame_image:
+          type: string
+          format: uri
+          description: URL or base64 image; JPG/JPEG/PNG; size <=20MB; short side >300px; AR between 2:5 and 5:2
+        duration:
+          type: integer
+          enum: [6, 10]
+        resolution:
+          type: string
+          enum: [768P, 1080P]
+          default: 768P
+    MiniMaxEnqueueResponse:
+      type: object
+      properties:
+        generation_id:
+          type: string
+        status:
+          type: string
+    MiniMaxFetchResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        video:
+          type: object
+          properties:
+            url:
+              type: string
+              format: uri
+    RunwayActTwoRequest:
+      type: object
+      required: [model, character, reference]
+      properties:
+        model:
+          type: string
+          enum: [runway/act_two]
+        character:
+          oneOf:
+            - type: object
+              required: [type, url]
+              properties:
+                type:
+                  type: string
+                  enum: [video]
+                url:
+                  type: string
+                  format: uri
+            - type: object
+              required: [type, url]
+              properties:
+                type:
+                  type: string
+                  enum: [image]
+                url:
+                  type: string
+                  format: uri
+        reference:
+          type: object
+          required: [type, url]
+          properties:
+            type:
+              type: string
+              enum: [video]
+            url:
+              type: string
+              format: uri
+        frame_size:
+          type: string
+          enum: ['1280:720', '720:1280', '1104:832', '832:1104', '960:960', '1584:672', '848:480', '640:480']
+          default: '1280:720'
+        body_control:
+          type: boolean
+        expression_intensity:
+          type: integer
+          minimum: 1
+          maximum: 5
+          default: 3
+        seed:
+          type: integer
+          maximum: 4294967295
+    RunwayEnqueueResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          example: queued
+    RunwayFetchResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        video:
+          type: array
+          items:
+            type: string
+            format: uri
+        error:
+          type: string
+    SeedanceI2VRequest:
+      type: object
+      required: [model, image_url, prompt, duration]
+      properties:
+        model:
+          type: string
+          enum: [bytedance/seedance-1-0-pro-i2v]
+        image_url:
+          type: string
+          description: Direct URL or Base64-encoded image
+        prompt:
+          type: string
+        resolution:
+          type: string
+          enum: [480p, 720p, 1080p]
+          default: 1080p
+        duration:
+          type: integer
+          enum: [5, 10]
+        watermark:
+          type: boolean
+          default: false
+        seed:
+          type: integer
+        camerafixed:
+          type: boolean
+          default: false
+          description: Adds instructions to fix camera position; effect not guaranteed
+    SeedanceT2VRequest:
+      type: object
+      required: [model, prompt, duration]
+      properties:
+        model:
+          type: string
+          enum: [bytedance/seedance-1-0-pro-t2v]
+        prompt:
+          type: string
+        resolution:
+          type: string
+          enum: [480p, 720p, 1080p]
+          default: 1080p
+        aspect_ratio:
+          type: string
+          enum: ['16:9', '4:3', '1:1', '3:4', '9:16', '21:9', '9:21']
+          default: '16:9'
+        duration:
+          type: integer
+          enum: [5, 10]
+        watermark:
+          type: boolean
+          default: false
+        seed:
+          type: integer
+        camerafixed:
+          type: boolean
+          default: false
+          description: Adds instructions to fix camera position; effect not guaranteed
+    AlibabaWanT2VPlusRequest:
+      type: object
+      required: [model, prompt]
+      properties:
+        model:
+          type: string
+          enum: [alibaba/wan2.2-t2v-plus]
+        prompt:
+          type: string
+        resolution:
+          type: string
+          enum: [480P, 1080P]
+          default: 1080P
+        aspect_ratio:
+          type: string
+          enum: ['16:9', '9:16', '1:1', '4:3', '3:4']
+          default: '16:9'
+        negative_prompt:
+          type: string
+        watermark:
+          type: boolean
+          default: false
+        seed:
+          type: integer
+        enable_prompt_expansion:
+          type: boolean
+          default: true
+    ModelsListResponse:
+      type: object
+      properties:
+        object:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              type:
+                type: string
+              info:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  developer:
+                    type: string
+                  description:
+                    type: string
+                  contextLength:
+                    type: integer
+                  url:
+                    type: string
+              features:
+                type: array
+                items:
+                  type: string
+tags:
+  - name: Google Veo
+  - name: Kling v2.1-master
+  - name: Luma Dream Machine
+  - name: MiniMax Hailuo
+  - name: Runway Act-Two
+  - name: ByteDance Seedance 1.0 Pro
+  - name: Alibaba Wan 2.2 Plus
+  - name: Models
